@@ -10,21 +10,21 @@ use std::path::Path;
 #[derive(BinRead, Copy, Clone)]
 pub struct Vec2 {
     pub x: f32,
-    y: f32,
+    pub y: f32,
 }
 #[derive(BinRead, Copy, Clone, Default)]
 pub struct Vec3 {
     pub x: f32,
-    y: f32,
-    z: f32,
+    pub y: f32,
+    pub z: f32,
 }
 
 #[derive(BinRead, Copy, Clone)]
 pub struct RGBA {
     pub r: u8,
-    g: u8,
-    b: u8,
-    a: u8,
+    pub g: u8,
+    pub b: u8,
+    pub a: u8,
 }
 
 #[bitfield]
@@ -70,11 +70,11 @@ pub struct MDLFile {
     pub colors: Option<Vec<RGBA>>,
 
     pub index_count: u16,
-    #[br(count = index_count as usize)]
+    #[br(count = index_count)]
     pub indexs: Vec<u16>,
 
-    #[br(args{count: frame_count as usize, inner:(vertex_count,flags.norm(),)})]
-    pub ls_entry: Vec<Frame>,
+    #[br(count = frame_count,args{inner:(vertex_count,flags.norm(),)})]
+    pub frames: Vec<Frame>,
 }
 
 impl MDLFile {
