@@ -1,5 +1,6 @@
 use clap::Parser;
 use std::path::PathBuf;
+mod lib;
 mod mdl;
 
 #[derive(Parser)]
@@ -13,4 +14,5 @@ fn main() {
 
     println!("{}", &args.mdl.display());
     let mdl = mdl::MDLFile::open(args.mdl).unwrap();
+    pollster::block_on(lib::run());
 }
