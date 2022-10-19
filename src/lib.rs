@@ -4,7 +4,8 @@ use winit::{
     window::WindowBuilder,
 };
 mod wgpu_render;
-use crate::wgpu_render::State;
+mod mdl;
+use crate::{wgpu_render::State, mdl::MDLFile};
 
 
 
@@ -37,7 +38,7 @@ pub async fn run() {
         Event::WindowEvent {
             ref event,
             window_id,
-        } if window_id == window.id() => match event {
+        } if window_id == window.id() => if !state.input(event) { match event {
             WindowEvent::CloseRequested
             | WindowEvent::KeyboardInput {
                 input:
@@ -49,7 +50,15 @@ pub async fn run() {
                 ..
             } => *control_flow = ControlFlow::Exit,
             WindowEvent::DroppedFile(out_file)=>{
-                println!("{}",&out_file.display())
+                let mdl_file = MDLFile::open(&out_file);
+                match mdl_file {
+                    Err(error) => {
+                        println!("Failed to Load {}",&out_file.display())
+                    },
+                    Ok(model)=>{
+                        println!("Successful to Load {}",&out_file.display())
+                    },
+                }
             },
             WindowEvent::Resized(physical_size) => {
                 state.resize(*physical_size);
@@ -59,7 +68,7 @@ pub async fn run() {
                 state.resize(**new_inner_size);
             },
             _ => {}
-        },
+        }}
         _ => {}
     });
 }
